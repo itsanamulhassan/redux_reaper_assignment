@@ -1,3 +1,6 @@
+import DashboardLayout from "@/layouts/dashboard-layout";
+import Error from "@/pages/public/error";
+import { Suspense } from "react";
 import { createBrowserRouter } from "react-router";
 
 const routers = createBrowserRouter([
@@ -6,20 +9,10 @@ const routers = createBrowserRouter([
     errorElement: <Error />,
     element: (
       <Suspense fallback="fallback --------------">
-        <PublicLayout />
-      </Suspense>
-    ),
-    children: [...publicRoutes],
-  },
-  {
-    path: "/dashboard",
-    errorElement: <Error />,
-    element: (
-      <Suspense fallback="fallback --------------">
         <DashboardLayout />
       </Suspense>
     ),
-    children: [...dashboardRoutes],
+    // children: [...dashboardRoutes],
   },
 ]);
 

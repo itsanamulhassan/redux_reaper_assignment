@@ -7,8 +7,8 @@ export function ModeToggle() {
 
   return (
     <Button
-      className="relative"
-      variant="secondary"
+      variant="ghost"
+      className="size-7 relative"
       size="icon"
       onClick={() =>
         setTheme(
