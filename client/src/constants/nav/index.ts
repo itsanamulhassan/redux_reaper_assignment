@@ -1,33 +1,32 @@
 import type { NavProps } from "@/types/nav";
 import {
   IconChartBar,
-  IconDashboard,
   IconHelp,
-  IconListDetails,
   IconSearch,
   IconSettings,
 } from "@tabler/icons-react";
+import { Blend, Book } from "lucide-react";
 
-export const data: NavProps = {
+export const navData: NavProps = {
   user: {
     name: "Anamul Hassan",
-    email: "hassan@mail.com",
-    avatar: "../../../public/avatar.jpg",
+    email: "itsanamulhassan@gmail.com",
+    avatar: "/avatars/ah.jpg",
   },
   navMain: [
     {
-      title: "Users",
-      url: "users",
-      icon: IconDashboard,
+      title: "Book",
+      url: "book",
+      icon: Book,
     },
     {
-      title: "Tasks",
-      url: "tasks",
-      icon: IconListDetails,
+      title: "Borrow",
+      url: "borrow",
+      icon: Blend,
     },
     {
-      title: "Analytics",
-      url: "analytics",
+      title: "Summary",
+      url: "summary",
       icon: IconChartBar,
     },
   ],

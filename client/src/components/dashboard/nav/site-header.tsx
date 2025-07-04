@@ -1,13 +1,13 @@
 import { ModeToggle } from "@/components/common/mode-toggle";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { data } from "@/constants/nav";
+import { navData } from "@/constants/nav";
 import { useLocation } from "react-router";
 
 export function SiteHeader() {
   const currentPathname = useLocation().pathname.split("/").at(-1);
   const pageTitle =
-    data.navMain.find((item) => item.url === currentPathname)?.title ??
+    navData.navMain.find((item) => item.url === currentPathname)?.title ??
     "Documents";
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
