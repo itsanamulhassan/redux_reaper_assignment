@@ -8,5 +8,5 @@ export const apiSlice = createApi({
   reducerPath: "apiSlice",
   baseQuery: baseQuery,
   endpoints: () => ({}),
-  tagTypes: ["book", "borrow"],
+  tagTypes: ["book", "borrow", "summary"],
 });
