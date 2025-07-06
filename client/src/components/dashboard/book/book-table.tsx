@@ -86,6 +86,15 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart } from "lucide-react";
+import {
+  DialogDescription,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import CreateBook from "./create-book";
 
 interface BookProps {
   title: string;
@@ -387,10 +396,26 @@ export function DataTable({ data: initialData }: { data: BookProps[] }) {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm">
-            <IconPlus />
-            <span className="hidden lg:inline">Add Book</span>
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <IconPlus />
+                <span className="hidden lg:inline">Create Book</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent size="md">
+              <DialogHeader>
+                <DialogTitle>Create New Book</DialogTitle>
+                <DialogDescription>
+                  Enter the details of the new book to create it to the library
+                  catalog. Include title, author, ISBN, and other relevant
+                  information.
+                </DialogDescription>
+                {/* Create book form */}
+                <CreateBook />
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <TabsContent
@@ -547,8 +572,6 @@ export function DataTable({ data: initialData }: { data: BookProps[] }) {
 
 function TableCellViewer({ item }: { item: BookProps }) {
   const isMobile = useIsMobile();
-
-  console.log(item.title);
 
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>

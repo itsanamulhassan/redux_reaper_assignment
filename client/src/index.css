@@ -117,4 +117,84 @@
   body {
     @apply bg-background text-foreground;
   }
+  body {
+    font-family: "Poppins", sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* CUSTOMIZE SCROLLBAR */
+  ::-webkit-scrollbar {
+    @apply w-1;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-foreground/20 rounded-sm hover:bg-foreground/50 transition-colors duration-200;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+
+  /* THIS WILL REMOVE THE UPPER AND LOWER ARROW ON THE NUMBER INPUT */
+  /* FOR WEBKIT (CHROME, SAFARI) */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* FOR FIREFOX */
+  input::-moz-number-spin-inner,
+  input::-moz-number-spin-outer {
+    /* OVERRIDE FIREFOX'S DEFAULT STYLING FOR NUMBER INPUTS */
+    -moz-appearance: textfield !important;
+    margin: 0;
+  }
+
+  /* FOR WEBKIT (CHROME, SAFARI AND FIREFOX) */
+  input {
+    /* FOR WEBKIT */
+    -webkit-appearance: textfield;
+    /* FOR FIREFOX */
+    -moz-appearance: textfield;
+    appearance: textfield;
+    margin: 0;
+  }
+
+  /* HIDE SCROLLBAR FRO CHROME, SAFARI AND OPERA */
+  .scroll-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* HIDE SCROLLBAR FOR IE, EDGE AND FIREFOX */
+  .scroll-hidden {
+    -ms-overflow-style: none; /* IE AND EDGE */
+    scrollbar-width: none; /* FIREFOX */
+  }
+
+  /* HIDE SCROLLBAR FRO CHROME, SAFARI AND OPERA */
+  html::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* HIDE SCROLLBAR FOR IE, EDGE AND FIREFOX */
+  html {
+    -ms-overflow-style: none; /* IE AND EDGE */
+    scrollbar-width: none; /* FIREFOX */
+  }
+
+  /* IMAGE LAZY LOAD CLASSES */
+  .LazyLoad {
+    opacity: 0;
+    transition: all 1s ease-in-out;
+  }
+
+  .is-visible {
+    opacity: 1;
+  }
+
+  .custom-bar:hover {
+    opacity: 1 !important;
+  }
 }
