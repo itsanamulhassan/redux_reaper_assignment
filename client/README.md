@@ -1,69 +1,134 @@
-# React + TypeScript + Vite
+# 📚 Library Management API
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A RESTful API built with **Express.js**, **Mongoose**, and **TypeScript** that allows users to manage books and borrow records. Includes validation using **Zod**, error handling middleware, and MongoDB aggregation for analytics.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Live link
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```live-link
+https://library-management-system-theta-wheat.vercel.app
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Features
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- ✅ Add, update, retrieve, and delete books.
+- ✅ Borrow books with quantity validation.
+- ✅ Automatically update book availability.
+- ✅ Custom error handling with consistent error formats.
+- ✅ Schema validation using **Zod** before database operations.
+- ✅ Aggregation to get borrowed books summary.
+- ✅ Organized and modular project structure using MVC pattern.
+- ✅ Fully typed with **TypeScript** for reliability and developer experience.
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 🛠️ Technologies Used
+
+- Node.js
+- Express.js
+- MongoDB & Mongoose
+- Zod for schema validation
+- TypeScript
+- ts-node-dev for development
+
+---
+
+## 📁 Folder Structure
+
+src/  
+│
+├── app/  
+│ │ ├── config/ # Environment variables handlers  
+│ │ ├── controllers/ # Route handlers (books, borrow)  
+│ │ ├── controllers/ # Route handlers (books, borrow)  
+│ │ ├── middlewares/ # Custom middlewares (validation, error handling)  
+│ │ ├── models/ # Mongoose schemas  
+│ │ ├── routes/ # API route declarations  
+│ │ ├── schemas/ #Zod schemas for validation  
+│ │ ├── types/ # Custom type declarations  
+│ │ └── utils/ # Utility functions (error handlers, formatters)  
+├── server.ts # Entry point  
+└── app.ts # Main Express app setup
+
+---
+
+## 🧑‍💻 Getting Started
+
+### 📦 Prerequisites
+
+- Node.js (>=22.25.0)
+- MongoDB (Local or Atlas)
+- npm
+
+### ⚙️ Environment Setup
+
+Create a `.env` file in the root directory:
+
+```env
+PORT=8888
+DB_URL=http://localhost:8888/api/books
 ```
+
+---
+
+# Clone the repository
+
+git clone https://github.com/itsanamulhassan/express_mongoose_master_assignment  
+cd library_management_app
+
+# Install dependencies
+
+```
+npm install
+```
+
+# Start the server
+
+```
+npm run dev
+```
+
+🧪 API Endpoints
+
+📘 Books  
+Method Endpoint Description  
+POST /api/books Create a new book  
+GET /api/books Get all books (filter + sort)  
+GET /api/books/:bookId Get a single book by ID  
+PUT /api/books/:bookId Update book details  
+DELETE /api/books/:bookId Delete a book
+
+🔄 Borrowing  
+Method Endpoint Description  
+POST /api/borrow Borrow a book  
+GET /api/borrow Get borrowing summary report
+
+✅ Example Request Payload
+
+{
+"title": "The Theory of Everything",  
+"author": "Stephen Hawking",  
+"genre": "SCIENCE",  
+"isbn": "9780553380163",  
+"description": "An overview of cosmology and black holes.",  
+"copies": 5,  
+"available": true  
+}
+
+🧹 Scripts
+Command Description
+npm run dev Run the app in dev mode
+npm run build Compile TypeScript files
+npm start Start compiled app
+📩 Contributing
+
+    Fork this repo
+    Create your feature branch (git checkout -b feature/my-feature)
+    Commit your changes (git commit -am 'Add some feature')
+    Push to the branch (git push origin feature/my-feature)
+    Open a pull request
+
+---
+
+Let me know if you’d like to add environment setup for Docker, Postman collections, or Swagger documentation.
