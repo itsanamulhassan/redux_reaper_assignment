@@ -62,7 +62,6 @@ const UpdateBook: FC<UpdateBookCompProps> = ({ data }) => {
       author,
     },
   });
-  console.log(watch());
 
   const [updateBook, { isLoading: updateBookLoading, error: updateBookError }] =
     useUpdateBookMutation({});

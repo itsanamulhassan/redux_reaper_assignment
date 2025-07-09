@@ -99,6 +99,7 @@ import {
   useDeleteBookMutation,
   useUpdateBookMutation,
 } from "@/store/api/bookApi";
+
 import type { ResponseProps } from "@/types/public";
 import { toast } from "sonner";
 import {
@@ -373,10 +374,9 @@ export function DataTable({
               </Dialog>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handlerBookUpdate(row.original)}>
-              Favorite
+              {row.original.favorite ? "Not Favorite" : "Favorite"}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-
             <DropdownMenuItem
               onClick={() => handlerBookDelete(row.original._id)}
               asChild
