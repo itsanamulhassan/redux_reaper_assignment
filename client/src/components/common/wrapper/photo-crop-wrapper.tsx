@@ -4,6 +4,7 @@ import FileInput from "../form/file-input";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -139,8 +140,9 @@ const PhotoCropper: FC<IPhotoCropperProps> = ({
         >
           <DialogTrigger></DialogTrigger>
           <DialogContent className="sm:max-w-[800px] h-[85%]">
-            <DialogHeader className="hidden">
+            <DialogHeader className="sr-only">
               <DialogTitle></DialogTitle>
+              <DialogDescription></DialogDescription>
             </DialogHeader>
             <div>
               <div className="relative w-full">

@@ -1,7 +1,7 @@
 import PageWrapper from "@/components/common/wrapper/page-wrapper";
 import { DataTable } from "@/components/dashboard/book/book-table";
 import { useGetBooksQuery } from "@/store/api/bookApi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export type QueryProps = {
   search: string;

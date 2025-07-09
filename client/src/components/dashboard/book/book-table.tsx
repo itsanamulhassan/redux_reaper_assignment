@@ -99,17 +99,33 @@ import {
   useDeleteBookMutation,
   useUpdateBookMutation,
 } from "@/store/api/bookApi";
+import type { ResponseProps } from "@/types/public";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import UpdateBook from "./update-book";
+import type { GenreEnumProps } from "@/schemas/book";
 
-interface BookProps {
+export interface BookProps {
   title: string;
   available: boolean;
-  genre: string;
+  genre: GenreEnumProps;
   isbn: string;
   copies: number;
   author: string;
   _id: string;
   description: string;
   favorite: boolean;
+  cover?: string;
 }
 
 // Create a separate component for the drag handle
@@ -193,12 +209,35 @@ export function DataTable({
   const [updateBook] = useUpdateBookMutation();
 
   const handlerBookUpdate = async (row: BookProps) => {
-    const response = await updateBook({ id: row._id, favorite: !row.favorite });
-    console.log(response);
+    const response: ResponseProps<BookProps> = await updateBook({
+      id: row._id,
+      body: { favorite: !row.favorite },
+    }).unwrap();
+
+    if (response.success) {
+      toast.message(response.message, {
+        description: `${response.data.title} has been updated successfully. You can check the books list for confirmation`,
+      });
+    } else {
+      toast.error("Book updated error", {
+        description: response.error.data.message,
+      });
+    }
   };
+
   const handlerBookDelete = async (id: string) => {
-    // const response = await updateBook({id: row._id, favorite: !row.favorite})
-    // console.log(response);
+    const response: ResponseProps<BookProps> = await deleteBook(id).unwrap();
+
+    if (response.success) {
+      toast.message(response.message, {
+        description:
+          "Selected book has been deleted successfully. You can check the books list for confirmation",
+      });
+    } else {
+      toast.error("Book deleted error", {
+        description: response.error.data.message,
+      });
+    }
   };
 
   const columns: ColumnDef<BookProps>[] = [
@@ -314,16 +353,60 @@ export function DataTable({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32">
-            <DropdownMenuItem onClick={() => handlerBookUpdate(row.original)}>
-              Edit
+            <DropdownMenuItem asChild>
+              <Dialog>
+                <DialogTrigger className="hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground rounded-sm w-full inline-block text-start px-2 py-1.5 text-sm">
+                  Update
+                </DialogTrigger>
+                <DialogContent size="md">
+                  <DialogHeader>
+                    <DialogTitle>Update New Book</DialogTitle>
+                    <DialogDescription>
+                      Enter the current details of the book to update it to the
+                      library catalog. Include title, author, ISBN, and other
+                      relevant information.
+                    </DialogDescription>
+                  </DialogHeader>
+                  {/* Update book form */}
+                  <UpdateBook data={row.original} />
+                </DialogContent>
+              </Dialog>
             </DropdownMenuItem>
-            <DropdownMenuItem>Favorite</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handlerBookUpdate(row.original)}>
+              Favorite
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
+
             <DropdownMenuItem
-              variant="destructive"
               onClick={() => handlerBookDelete(row.original._id)}
+              asChild
             >
-              Delete
+              <AlertDialog>
+                <AlertDialogTrigger className="text-destructive rounded-sm hover:!bg-destructive/5 w-full inline-block text-start px-2 py-1.5 text-sm">
+                  Delete
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      your book information and remove the data from our
+                      servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => handlerBookDelete(row.original._id)}
+                      className="bg-destructive hover:bg-destructive/90"
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -448,9 +531,9 @@ export function DataTable({
                   catalog. Include title, author, ISBN, and other relevant
                   information.
                 </DialogDescription>
-                {/* Create book form */}
-                <CreateBook setOpenCreateBook={setOpenCreateBook} />
               </DialogHeader>
+              {/* Create book form */}
+              <CreateBook setOpenCreateBook={setOpenCreateBook} />
             </DialogContent>
           </Dialog>
         </div>
