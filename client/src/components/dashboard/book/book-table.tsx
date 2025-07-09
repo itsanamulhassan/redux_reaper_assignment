@@ -47,7 +47,6 @@ import {
   type SortingState,
   type VisibilityState,
 } from "@tanstack/react-table";
-
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -95,6 +94,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import CreateBook from "./create-book";
+import type { QueryProps } from "@/pages/dashboard/book";
+import {
+  useDeleteBookMutation,
+  useUpdateBookMutation,
+} from "@/store/api/bookApi";
 
 interface BookProps {
   title: string;
@@ -128,122 +132,6 @@ function DragHandle({ id }: { id: number | string }) {
   );
 }
 
-const columns: ColumnDef<BookProps>[] = [
-  {
-    id: "drag",
-    header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original._id} />,
-  },
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "title",
-    header: "Title",
-    cell: ({ row }) => {
-      return <TableCellViewer item={row.original} />;
-    },
-    enableHiding: false,
-  },
-  {
-    accessorKey: "author",
-    header: "Author",
-    cell: ({ row }) => <div className="w-32">{row.original.author}</div>,
-  },
-  {
-    accessorKey: "genre",
-    header: "Genre",
-    cell: ({ row }) => (
-      <div className="w-32">{row.original.genre.split("_").join(" ")}</div>
-    ),
-  },
-  {
-    accessorKey: "copies",
-    header: "Copies",
-    cell: ({ row }) => (
-      <div className="w-32">
-        <Badge variant={row.original.copies > 0 ? "outline" : "destructive"}>
-          {row.original.copies}
-        </Badge>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "available",
-    header: "Status",
-    cell: ({ row }) => (
-      <Badge variant="outline">
-        {row.original.available ? (
-          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-        ) : (
-          <IconLoader />
-        )}
-        {row.original.available ? "available" : "borrowed"}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: "favorite",
-    header: "Favorite",
-    cell: ({ row }) => (
-      <Badge variant="outline">
-        {!row.original.favorite ? (
-          <IconHeartFilled color="#e03131" />
-        ) : (
-          <Heart />
-        )}
-      </Badge>
-    ),
-  },
-
-  {
-    id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Favorite</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
-];
-
 function DraggableRow({ row }: { row: Row<BookProps> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original._id,
@@ -269,7 +157,13 @@ function DraggableRow({ row }: { row: Row<BookProps> }) {
   );
 }
 
-export function DataTable({ data: initialData }: { data: BookProps[] }) {
+export function DataTable({
+  data: initialData,
+  query: { query, setQuery },
+}: {
+  data: BookProps[];
+  query: { query: QueryProps; setQuery: (query: QueryProps) => void };
+}) {
   const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -279,9 +173,10 @@ export function DataTable({ data: initialData }: { data: BookProps[] }) {
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10,
+    pageIndex: query.pagination.page,
+    pageSize: query.pagination.size,
   });
+  const [openCreateBook, setOpenCreateBook] = React.useState<boolean>(false);
   const sortableId = React.useId();
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
@@ -293,6 +188,148 @@ export function DataTable({ data: initialData }: { data: BookProps[] }) {
     () => data?.map(({ _id }) => _id) || [],
     [data]
   );
+
+  const [deleteBook] = useDeleteBookMutation();
+  const [updateBook] = useUpdateBookMutation();
+
+  const handlerBookUpdate = async (row: BookProps) => {
+    const response = await updateBook({ id: row._id, favorite: !row.favorite });
+    console.log(response);
+  };
+  const handlerBookDelete = async (id: string) => {
+    // const response = await updateBook({id: row._id, favorite: !row.favorite})
+    // console.log(response);
+  };
+
+  const columns: ColumnDef<BookProps>[] = [
+    {
+      id: "drag",
+      header: () => null,
+      cell: ({ row }) => <DragHandle id={row.original._id} />,
+    },
+    {
+      id: "select",
+      header: ({ table }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Select all"
+          />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+          />
+        </div>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "title",
+      header: "Title",
+      cell: ({ row }) => {
+        return <TableCellViewer item={row.original} />;
+      },
+      enableHiding: false,
+    },
+    {
+      accessorKey: "author",
+      header: "Author",
+      cell: ({ row }) => <div className="w-32">{row.original.author}</div>,
+    },
+    {
+      accessorKey: "isbn",
+      header: "ISBN",
+      cell: ({ row }) => <div className="w-32">{row.original.isbn}</div>,
+    },
+    {
+      accessorKey: "genre",
+      header: "Genre",
+      cell: ({ row }) => (
+        <div className="w-32">{row.original.genre.split("_").join(" ")}</div>
+      ),
+    },
+    {
+      accessorKey: "copies",
+      header: "Copies",
+      cell: ({ row }) => (
+        <div className="w-32">
+          <Badge variant={row.original.copies > 0 ? "outline" : "destructive"}>
+            {row.original.copies}
+          </Badge>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "available",
+      header: "Status",
+      cell: ({ row }) => (
+        <Badge variant="outline">
+          {row.original.available ? (
+            <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+          ) : (
+            <IconLoader />
+          )}
+          {row.original.available ? "available" : "borrowed"}
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: "favorite",
+      header: "Favorite",
+      cell: ({ row }) => (
+        <Badge variant="outline">
+          {row.original.favorite ? (
+            <IconHeartFilled color="#e03131" />
+          ) : (
+            <Heart />
+          )}
+        </Badge>
+      ),
+    },
+
+    {
+      id: "actions",
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+              size="icon"
+            >
+              <IconDotsVertical />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-32">
+            <DropdownMenuItem onClick={() => handlerBookUpdate(row.original)}>
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem>Favorite</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() => handlerBookDelete(row.original._id)}
+            >
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    },
+  ];
 
   const table = useReactTable({
     data,
@@ -396,7 +433,7 @@ export function DataTable({ data: initialData }: { data: BookProps[] }) {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Dialog>
+          <Dialog open={openCreateBook} onOpenChange={setOpenCreateBook}>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconPlus />
@@ -412,7 +449,7 @@ export function DataTable({ data: initialData }: { data: BookProps[] }) {
                   information.
                 </DialogDescription>
                 {/* Create book form */}
-                <CreateBook />
+                <CreateBook setOpenCreateBook={setOpenCreateBook} />
               </DialogHeader>
             </DialogContent>
           </Dialog>
@@ -465,7 +502,7 @@ export function DataTable({ data: initialData }: { data: BookProps[] }) {
                       colSpan={columns.length}
                       className="h-24 text-center"
                     >
-                      No results.
+                      No books found.
                     </TableCell>
                   </TableRow>
                 )}
@@ -484,9 +521,15 @@ export function DataTable({ data: initialData }: { data: BookProps[] }) {
                 Rows per page
               </Label>
               <Select
-                value={`${table.getState().pagination.pageSize}`}
+                value={query?.pagination?.size.toString()}
                 onValueChange={(value) => {
-                  table.setPageSize(Number(value));
+                  setQuery({
+                    ...query,
+                    pagination: {
+                      ...query.pagination,
+                      size: +value,
+                    },
+                  } as QueryProps);
                 }}
               >
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
@@ -495,9 +538,9 @@ export function DataTable({ data: initialData }: { data: BookProps[] }) {
                   />
                 </SelectTrigger>
                 <SelectContent side="top">
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
+                  {[10, 20, 30, 40, 50, 99999999999999].map((pageSize) => (
                     <SelectItem key={pageSize} value={`${pageSize}`}>
-                      {pageSize}
+                      {pageSize > 50 ? "All" : pageSize}
                     </SelectItem>
                   ))}
                 </SelectContent>

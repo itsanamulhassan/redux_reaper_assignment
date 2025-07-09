@@ -79,7 +79,6 @@ const PhotoCropper: FC<IPhotoCropperProps> = ({
   } = cropState;
 
   const onCropComplete = (_: unknown, croppedAreaPixels: any | unknown) => {
-    console.log(croppedAreaPixels, "croppedAreaPixels");
     setCropState((prevState) => ({
       ...prevState,
       croppedAreaPixels,

@@ -19,12 +19,14 @@ import {
 import Submit from "@/components/common/form/submit";
 import PhotoCropper from "@/components/common/wrapper/photo-crop-wrapper";
 import { useCreateBookMutation } from "@/store/api/bookApi";
+import type { ResponseProps } from "@/types/public";
+import { toast } from "sonner";
 
 interface Props {
-  type?: unknown;
+  setOpenCreateBook: (openCreateBook: boolean) => void;
 }
 
-const CreateBook: FC<Props> = () => {
+const CreateBook: FC<Props> = ({ setOpenCreateBook }) => {
   const {
     register,
     setValue,
@@ -46,13 +48,24 @@ const CreateBook: FC<Props> = () => {
   const [photo, setPhoto] = useState<string | undefined>();
 
   const onSubmit = async (data: CreateBookProps) => {
-    const response = createBook(data);
-    console.log(response);
+    const response: ResponseProps<CreateBookProps> = await createBook(
+      data
+    ).unwrap();
+    if (response.success) {
+      toast.message(response.message, {
+        description: `${response.data.title} has been successfully created. Please review the books list to confirm its addition.`,
+      });
+      setOpenCreateBook(false);
+    } else {
+      toast.message(response.message, {
+        description: `An error occurred while creating the book. We apologize for the inconvenience. Please try again.`,
+      });
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
         <InputWrapper
           labelFor="title"
           label="Enter the book title ✻"
@@ -77,7 +90,7 @@ const CreateBook: FC<Props> = () => {
           />
         </InputWrapper>
         <InputWrapper
-          className="col-span-2"
+          className="col-span-1 lg:col-span-2"
           labelFor="description"
           label="Enter the book description"
           error={errors.description?.message}
@@ -140,7 +153,7 @@ const CreateBook: FC<Props> = () => {
         </InputWrapper>
         <InputWrapper labelFor="cover" label="Choose the book cover">
           <PhotoCropper
-            ratio={3 / 4}
+            // ratio={3 / 4}
             id="avatar"
             setPhoto={(value: string | undefined) => {
               setPhoto(value);

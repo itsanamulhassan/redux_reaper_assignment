@@ -14,7 +14,7 @@ const Logo: FC<LogoData> = ({ className }) => {
           "opacity-100 dark:opacity-0 size-5 transition-all duration-300",
           className
         )}
-        src="../../../public/logos/logo_dark.png"
+        src="../../../logos/logo_dark.png"
         alt="library management dark logo"
       />
       <img
@@ -23,7 +23,7 @@ const Logo: FC<LogoData> = ({ className }) => {
           "size-5 opacity-0 dark:opacity-100 transition-all duration-300",
           className
         )}
-        src="../../../public/logos/logo_light.png"
+        src="../../../logos/logo_light.png"
         alt="library management light logo"
       />
     </i>

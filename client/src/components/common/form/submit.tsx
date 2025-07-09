@@ -29,7 +29,7 @@ const Submit: FC<SubmitErrorWrapperProps> = ({
   return (
     <div
       className={cn(
-        "flex justify-between items-center mt-6 w-full",
+        "flex flex-col lg:flex-row gap-y-2 lg:gap-y-0 justify-between items-center mt-6 w-full",
         className,
         direction === "vertical" && "flex-col"
       )}

@@ -8,6 +8,7 @@ function App() {
   return (
     <Suspense fallback="Loading.........................">
       <RouterProvider router={routers} />
+
       <Toaster />
     </Suspense>
   );

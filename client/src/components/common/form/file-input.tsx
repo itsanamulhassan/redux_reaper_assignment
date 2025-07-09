@@ -63,7 +63,7 @@ const FileInput: FC<FileInputProps> = ({
         type="button"
         size="sm"
         variant="outline"
-        className="relative text-muted-foreground font-normal mt-[10px] w-full justify-start"
+        className="relative h-[36px] text-muted-foreground font-normal mt-[10px] w-full justify-start"
       >
         {photo ? photo.slice(0, 25) : placeholder || "Choose Photo"}
 

@@ -13,8 +13,8 @@ const bookApi = apiSlice.injectEndpoints({
     }),
     // Get all the books
     getBooks: builder.query({
-      query: ({ search, page, sort, size, fields, order }) => ({
-        url: `/books?search=${search || ""}&page=${page || 1}&size=${
+      query: ({ search, sort, fields, order, pagination: { size, page } }) => ({
+        url: `/books?search=${search || ""}&page=${page || 0}&size=${
           size || 10
         }&sort=${sort || ""}&order=${order || "asc"}&fields=${fields || ""}`,
       }),
