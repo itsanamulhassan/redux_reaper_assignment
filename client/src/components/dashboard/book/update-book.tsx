@@ -94,7 +94,6 @@ const UpdateBook: FC<UpdateBookCompProps> = ({ data }) => {
           error={errors.title?.message}
         >
           <Input
-            //   defaultValue={data.}
             id="title"
             type="text"
             {...register("title")}

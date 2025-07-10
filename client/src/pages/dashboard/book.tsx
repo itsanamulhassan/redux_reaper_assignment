@@ -29,6 +29,7 @@ const Book = () => {
   const { data, isLoading, isFetching } = useGetBooksQuery(query, {
     refetchOnMountOrArgChange: true,
   });
+  console.log(query);
 
   if (isLoading || isFetching) {
     return <h1>Books loading...</h1>;
@@ -36,7 +37,7 @@ const Book = () => {
 
   return (
     <PageWrapper>
-      <DataTable data={data.data} query={{ query, setQuery }} />
+      <DataTable data={data?.data || []} query={{ query, setQuery }} />
     </PageWrapper>
   );
 };
